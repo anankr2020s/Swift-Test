@@ -69,29 +69,10 @@ class StudentSubjectsScoreDetailsAPIView(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """
-        [Backend API and Data Calculation Skill Test]
-
-        description: get student details, subject's details, subject's credit, their score of each subject,
-                    their grade of each subject and their grade point average by student's ID.
-
-        pattern:     Data pattern in 'context_data' variable below.
-
-        remark:     - `grade` will be A  if 80 <= score <= 100
-                                      B+ if 75 <= score < 80
-                                      B  if 70 <= score < 75
-                                      C+ if 65 <= score < 70
-                                      C  if 60 <= score < 65
-                                      D+ if 55 <= score < 60
-                                      D  if 50 <= score < 55
-                                      F  if score < 50
-
-        """
 
         student_id = kwargs.get("id", None)
 
         student =Personnel.objects.get(id=student_id)
-        print(student)
         subjects = StudentSubjectsScore.objects.filter(student_id = student_id)
 
         subjects_detail = []
@@ -151,85 +132,6 @@ class StudentSubjectsScoreDetailsAPIView(APIView):
 class PersonnelDetailsAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
-        """
-        [Basic Skill and Observational Skill Test]
-
-        description: get personnel details by school's name.
-
-        data pattern:  {order}. school: {school's title}, role: {personnel type in string}, class: {class's order}, name: {first name} {last name}.
-
-        result pattern : in `data_pattern` variable below.
-
-        example:    1. school: Rose Garden School, role: Head of the room, class: 1, name: Reed Richards.
-                    2. school: Rose Garden School, role: Student, class: 1, name: Blackagar Boltagon.
-
-        rules:      - Personnel's name and School's title must be capitalize.
-                    - Personnel's details order must be ordered by their role, their class order and their name.
-
-        """
-
-        data_pattern = [
-            "1. school: Dorm Palace School, role: Teacher, class: 1,name: Mark Harmon",
-            "2. school: Dorm Palace School, role: Teacher, class: 2,name: Jared Sanchez",
-            "3. school: Dorm Palace School, role: Teacher, class: 3,name: Cheyenne Woodard",
-            "4. school: Dorm Palace School, role: Teacher, class: 4,name: Roger Carter",
-            "5. school: Dorm Palace School, role: Teacher, class: 5,name: Cynthia Mclaughlin",
-            "6. school: Dorm Palace School, role: Head of the room, class: 1,name: Margaret Graves",
-            "7. school: Dorm Palace School, role: Head of the room, class: 2,name: Darren Wyatt",
-            "8. school: Dorm Palace School, role: Head of the room, class: 3,name: Carla Elliott",
-            "9. school: Dorm Palace School, role: Head of the room, class: 4,name: Brittany Mullins",
-            "10. school: Dorm Palace School, role: Head of the room, class: 5,name: Nathan Solis",
-            "11. school: Dorm Palace School, role: Student, class: 1,name: Aaron Marquez",
-            "12. school: Dorm Palace School, role: Student, class: 1,name: Benjamin Collins",
-            "13. school: Dorm Palace School, role: Student, class: 1,name: Carolyn Reynolds",
-            "14. school: Dorm Palace School, role: Student, class: 1,name: Christopher Austin",
-            "15. school: Dorm Palace School, role: Student, class: 1,name: Deborah Mcdonald",
-            "16. school: Dorm Palace School, role: Student, class: 1,name: Jessica Burgess",
-            "17. school: Dorm Palace School, role: Student, class: 1,name: Jonathan Oneill",
-            "18. school: Dorm Palace School, role: Student, class: 1,name: Katrina Davis",
-            "19. school: Dorm Palace School, role: Student, class: 1,name: Kristen Robinson",
-            "20. school: Dorm Palace School, role: Student, class: 1,name: Lindsay Haas",
-            "21. school: Dorm Palace School, role: Student, class: 2,name: Abigail Beck",
-            "22. school: Dorm Palace School, role: Student, class: 2,name: Andrew Williams",
-            "23. school: Dorm Palace School, role: Student, class: 2,name: Ashley Berg",
-            "24. school: Dorm Palace School, role: Student, class: 2,name: Elizabeth Anderson",
-            "25. school: Dorm Palace School, role: Student, class: 2,name: Frank Mccormick",
-            "26. school: Dorm Palace School, role: Student, class: 2,name: Jason Leon",
-            "27. school: Dorm Palace School, role: Student, class: 2,name: Jessica Fowler",
-            "28. school: Dorm Palace School, role: Student, class: 2,name: John Smith",
-            "29. school: Dorm Palace School, role: Student, class: 2,name: Nicholas Smith",
-            "30. school: Dorm Palace School, role: Student, class: 2,name: Scott Mckee",
-            "31. school: Dorm Palace School, role: Student, class: 3,name: Abigail Smith",
-            "32. school: Dorm Palace School, role: Student, class: 3,name: Cassandra Martinez",
-            "33. school: Dorm Palace School, role: Student, class: 3,name: Elizabeth Anderson",
-            "34. school: Dorm Palace School, role: Student, class: 3,name: John Scott",
-            "35. school: Dorm Palace School, role: Student, class: 3,name: Kathryn Williams",
-            "36. school: Dorm Palace School, role: Student, class: 3,name: Mary Miller",
-            "37. school: Dorm Palace School, role: Student, class: 3,name: Ronald Mccullough",
-            "38. school: Dorm Palace School, role: Student, class: 3,name: Sandra Davidson",
-            "39. school: Dorm Palace School, role: Student, class: 3,name: Scott Martin",
-            "40. school: Dorm Palace School, role: Student, class: 3,name: Victoria Jacobs",
-            "41. school: Dorm Palace School, role: Student, class: 4,name: Carol Williams",
-            "42. school: Dorm Palace School, role: Student, class: 4,name: Cassandra Huff",
-            "43. school: Dorm Palace School, role: Student, class: 4,name: Deborah Harrison",
-            "44. school: Dorm Palace School, role: Student, class: 4,name: Denise Young",
-            "45. school: Dorm Palace School, role: Student, class: 4,name: Jennifer Pace",
-            "46. school: Dorm Palace School, role: Student, class: 4,name: Joe Andrews",
-            "47. school: Dorm Palace School, role: Student, class: 4,name: Michael Kelly",
-            "48. school: Dorm Palace School, role: Student, class: 4,name: Monica Padilla",
-            "49. school: Dorm Palace School, role: Student, class: 4,name: Tiffany Roman",
-            "50. school: Dorm Palace School, role: Student, class: 4,name: Wendy Maxwell",
-            "51. school: Dorm Palace School, role: Student, class: 5,name: Adam Smith",
-            "52. school: Dorm Palace School, role: Student, class: 5,name: Angela Christian",
-            "53. school: Dorm Palace School, role: Student, class: 5,name: Cody Edwards",
-            "54. school: Dorm Palace School, role: Student, class: 5,name: Jacob Palmer",
-            "55. school: Dorm Palace School, role: Student, class: 5,name: James Gonzalez",
-            "56. school: Dorm Palace School, role: Student, class: 5,name: Justin Kaufman",
-            "57. school: Dorm Palace School, role: Student, class: 5,name: Katrina Reid",
-            "58. school: Dorm Palace School, role: Student, class: 5,name: Melissa Butler",
-            "59. school: Dorm Palace School, role: Student, class: 5,name: Pamela Sutton",
-            "60. school: Dorm Palace School, role: Student, class: 5,name: Sarah Murphy"
-        ]
 
         school_title = kwargs.get("school_title", None)
         your_result = []
@@ -831,6 +733,21 @@ class SchoolHierarchyAPIView(APIView):
         ]
 
         your_result = []
+        
+
+        query_school = Schools.objects.all().order_by('-title').reverse()
+        for item in query_school:
+            school = SchoolSerializers(item).data
+            your_result.append({
+                'school': school['title']
+            })
+
+            query_personnel = Personnel.objects.all().order_by('-school_class').reverse()
+            for personnel in query_personnel:
+                personnel_detail = PersonnelSerializers(personnel).data
+                if(personnel_detail['school'] == school["title"]):
+                    print(personnel_detail)
+
 
         return Response(your_result, status=status.HTTP_200_OK)
 
@@ -839,15 +756,6 @@ class SchoolStructureAPIView(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """
-        [Logical Test]
-
-        description: get School's structure list in hierarchy.
-
-        pattern: in `data_pattern` variable below.
-
-        """
-
 
         your_result = []
         

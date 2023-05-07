@@ -51,7 +51,7 @@ class ClassessSerializers(serializers.ModelSerializer):
     school = SchoolSerializers(many=True,read_only=True)
     class Meta:
         model = Classes
-        fields = ('__all__')
+        fields = ['class_order','school']
         
 class SubjectSerializers(serializers.ModelSerializer):
     class Meta:
@@ -72,10 +72,12 @@ class SubjectStudentScoreSerializers(serializers.ModelSerializer):
 
 class PersonnelSerializers(serializers.ModelSerializer):
     full_name = GetFullName(source='*') 
-
+    role = getPersonnelType(source='*')
+    school = getSchoolTitle(source='*')
+    
     class Meta:
         model = Personnel
-        fields = ['id','full_name','school_class']
+        fields = ['id','full_name','school_class','role','school']
 
 class PersonnelDetailSerializers(serializers.ModelSerializer):
     name = GetFullName(source='*')  
